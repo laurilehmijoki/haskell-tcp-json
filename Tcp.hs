@@ -6,6 +6,8 @@ import System.IO
 import Control.Concurrent
 import qualified Data.ByteString.Lazy.Char8 as BS
 
+import Json
+
 handleSocket handler = withSocketsDo $ do
   args <- getArgs
   let port = fromIntegral (read $ head args :: Int)
@@ -21,5 +23,10 @@ sockHandler sock handler = do
 
 handleMessage handler handle = do
   line <- hGetLine handle
+  hPutStrLn handle ""
+  hPutStrLn handle "Here is a record as JSON:"
+  hPutStrLn handle $ BS.unpack $ asJson $ Response "morjens"
+  hPutStrLn handle ""
+  hPutStrLn handle "Here is a JSON as record:"
   hPutStrLn handle $ show $ handler $ BS.pack line
   hClose handle

@@ -2,7 +2,7 @@
 
 module Json where
 
-import Data.Aeson ((.:), (.:?), decode, FromJSON(..), Value(..))
+import Data.Aeson ((.:), (.:?), decode, encode, (.=), object, FromJSON(..), ToJSON(..), Value(..))
 import Control.Applicative ((<$>), (<*>))
 import Data.Time.Format     (parseTime)
 import Data.Time.Clock      (UTCTime)
@@ -18,6 +18,11 @@ data Paste = Paste { getLines    :: Integer
                    , getUser     :: Maybe String
                    , getBody     :: String
                    } deriving (Show)
+
+data Response = Response { getGreeting :: String } deriving (Show)
+
+instance ToJSON Response where
+  toJSON Response{..} = object [ "greeting" .= getGreeting ]
 
 instance FromJSON Paste where
   parseJSON (Object v) =
@@ -35,3 +40,5 @@ parseRHTime :: String -> Maybe UTCTime
 parseRHTime = parseTime defaultTimeLocale "%FT%X%QZ"
 
 parsePaste json = (decode json :: Maybe Paste)
+
+asJson greeting = encode greeting
